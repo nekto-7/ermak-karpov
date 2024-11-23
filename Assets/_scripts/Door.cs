@@ -1,17 +1,13 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
+using System.Collections;
 public class Door : MonoBehaviour
 {
     public Animator doorAnimator;
-    public AudioClip doorOpenSound;
-    private bool isDoorOpen = false;
-    private AudioSource audioSource;
-
-    private void Start()
-    {
-        audioSource = gameObject.AddComponent<AudioSource>();
-    }
-
+    public ItemPickup itemPickup;
+    public int index;
+    private bool isDoorOpen = false;       // Флаг состояния двери
+    // при входе в тригер автоматом проверка на открытие
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && !isDoorOpen)
@@ -19,24 +15,23 @@ public class Door : MonoBehaviour
             TryOpenDoor();
         }
     }
-
+    // попытка открыть дверь
     private void TryOpenDoor()
     {
-        if (ItemPickup.hasKey)  // Проверяем, есть ли у игрока ключ
+        if (itemPickup.hasKey)
         {
-            OpenDoor();
+            StartCoroutine(OpenDoor());
         }
         else
         {
-            Debug.Log("Дверь закрыта! Нужен ключ.");  // Сообщение в консоли, если нет ключа
-            // Можно добавить визуальное сообщение на экране
+            Debug.LogWarning("У игрока нет ключа!");
         }
     }
-
-    private void OpenDoor()
+    // открываем дверь
+    private IEnumerator OpenDoor()
     {
-        doorAnimator.SetTrigger("Open");  // Триггер анимации открытия двери
-        audioSource.PlayOneShot(doorOpenSound);  // Воспроизвести звук
-        isDoorOpen = true;
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(index);        
+        // логика выйграша
     }
 }

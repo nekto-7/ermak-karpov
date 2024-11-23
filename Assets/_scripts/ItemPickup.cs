@@ -1,40 +1,28 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ItemPickup : MonoBehaviour
 {
-    public string pickupMessage = "Нажмите E, чтобы подобрать ключ";
-    public GameObject actionIndicator;  // UI элемент (иконка или текст)
-    public AudioClip pickupSound;       // Звук подбора предмета
-
+    public bool hasKey = false;  // Переменная для ключа
+    public GameObject go;
     private bool isPlayerNear = false;
-    private AudioSource audioSource;
-
-    public static bool hasKey = false;  // Переменная для хранения состояния ключа
-
-    private void Start()
-    {
-        audioSource = gameObject.AddComponent<AudioSource>();
-        actionIndicator.SetActive(false);  // Скрыть индикатор при старте
-    }
-
+    // игрок вошел
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             isPlayerNear = true;
-            actionIndicator.SetActive(true);  // Показать индикатор
         }
     }
-
+    // игрок вышел
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             isPlayerNear = false;
-            actionIndicator.SetActive(false);  // Скрыть индикатор
         }
     }
-
+    // при нажатии кнопки е вызываем метод
     private void Update()
     {
         if (isPlayerNear && Input.GetKeyDown(KeyCode.E))
@@ -42,12 +30,10 @@ public class ItemPickup : MonoBehaviour
             PickUpKey();
         }
     }
-
+    // поднимаем ключ
     private void PickUpKey()
     {
-        audioSource.PlayOneShot(pickupSound);  // Воспроизвести звук
-        hasKey = true;  // Игрок подобрал ключ
-        actionIndicator.SetActive(false);  // Скрыть индикатор
-        Destroy(gameObject, pickupSound.length);  // Удалить объект ключа
+        hasKey = true;  // Установка ключа
+        Destroy(go.gameObject);  // Удаление ключа
     }
 }
